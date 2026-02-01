@@ -1,49 +1,49 @@
 # Notes
 
-A clean, Apple-style memo application for Windows, built with C# WPF.
+一款简洁的仿苹果风格 Windows 桌面备忘录应用，使用 C# WPF 构建。
 
 ![.NET](https://img.shields.io/badge/.NET-10.0-blue)
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-## Features
+## 功能特性
 
-- **Auto Year Grouping** — Notes are automatically categorized by year in the sidebar
-- **Time Sorting** — Newest notes appear first within each year group
-- **Smart Title Formatting** — First line auto-styled as bold large title; body text returns to normal size after line break
-- **Keyword Search** — Real-time search filtering across all notes (case-insensitive)
-- **Auto Date Stamping** — Modification date is automatically updated when you finish editing
-- **Export / Import** — Backup and restore notes as JSON files
-- **Local Storage** — Data saved to `AppData\Local\Notes\`, keeping your desktop clean
+- **按年自动分类** — 备忘录在侧栏按年份自动分组显示
+- **时间排序** — 每个年份组内按修改时间倒序排列，最新的在前
+- **智能标题格式** — 第一行自动加粗加大显示为标题，换行后恢复正文字体
+- **关键词搜索** — 实时搜索过滤，不区分大小写
+- **自动添加日期** — 退出编辑时自动更新修改时间并保存
+- **导出 / 导入** — 支持将备忘录导出为 JSON 文件，方便备份和迁移
+- **本地存储** — 数据保存在 `AppData\Local\Notes\`，不污染桌面
 
-## Screenshot
+## 界面预览
 
 ```
 ┌──────────────────────────────────────────┐
-│ [🔍 Search]          [+] [🗑] [⬇] [⬆]  │
+│ [🔍 搜索]            [+] [🗑] [⬇] [⬆]  │
 ├─────────────┬────────────────────────────┤
 │  2026       │                            │
-│   Note 1    │  Title (Bold & Large)      │
-│   Note 2    │                            │
-│  2025       │  Body text here...         │
-│   Note 3    │                            │
-│             │            2026/02/01 10:30│
+│   备忘录1   │  标题（粗体大字）           │
+│   备忘录2   │                            │
+│  2025       │  正文内容...               │
+│   备忘录3   │                            │
+│             │           2026/02/01 10:30 │
 └─────────────┴────────────────────────────┘
 ```
 
-## Download
+## 下载使用
 
-Go to [Releases](https://github.com/as1688816/Notes/releases) and download `Notes.exe`.
+前往 [Releases](https://github.com/as1688816/Notes/releases) 下载 `Notes.exe`。
 
-- **Standalone version** (~63MB): No dependencies required, runs on any Windows PC.
+- **独立版**（约 63MB）：无需安装任何依赖，任意 Windows 电脑双击即可运行。
 
-## Build from Source
+## 从源码构建
 
-### Prerequisites
+### 环境要求
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
 
-### Steps
+### 构建步骤
 
 ```bash
 git clone https://github.com/as1688816/Notes.git
@@ -52,13 +52,13 @@ dotnet build
 dotnet run
 ```
 
-### Publish
+### 发布
 
 ```bash
-# Lightweight (requires .NET runtime on target machine)
+# 轻量版（目标电脑需安装 .NET 运行时）
 dotnet publish -c Release --self-contained false -o ./app
 
-# Standalone single-file EXE (no dependencies)
+# 独立版单文件 EXE（无需任何依赖）
 dotnet publish -c Release -r win-x64 --self-contained \
   -p:PublishSingleFile=true \
   -p:IncludeNativeLibrariesForSelfExtract=true \
@@ -66,29 +66,29 @@ dotnet publish -c Release -r win-x64 --self-contained \
   -o ./publish
 ```
 
-## Tech Stack
+## 技术栈
 
-- **Framework**: C# WPF (.NET 10)
-- **MVVM**: CommunityToolkit.Mvvm
-- **Storage**: Newtonsoft.Json (local JSON file)
+- **框架**：C# WPF (.NET 10)
+- **MVVM**：CommunityToolkit.Mvvm
+- **数据存储**：Newtonsoft.Json（本地 JSON 文件）
 
-## Project Structure
-
-```
-├── Models/Note.cs              # Data model
-├── ViewModels/MainViewModel.cs # Core logic (MVVM)
-├── Services/NoteStorageService.cs # JSON persistence
-├── Converters/Converters.cs    # Value converters
-├── Styles/AppStyles.xaml       # Apple-style UI theme
-├── MainWindow.xaml / .cs       # Main UI & editor
-├── App.xaml / .cs              # App entry point
-└── app.ico                     # App icon
-```
-
-## Data Location
-
-Notes are stored at:
+## 项目结构
 
 ```
-C:\Users\<YourName>\AppData\Local\Notes\notes.json
+├── Models/Note.cs              # 数据模型
+├── ViewModels/MainViewModel.cs # 主视图模型（核心逻辑）
+├── Services/NoteStorageService.cs # JSON 持久化服务
+├── Converters/Converters.cs    # 值转换器
+├── Styles/AppStyles.xaml       # 苹果风格 UI 主题
+├── MainWindow.xaml / .cs       # 主界面与编辑器
+├── App.xaml / .cs              # 应用入口
+└── app.ico                     # 应用图标
+```
+
+## 数据存储位置
+
+备忘录数据保存在：
+
+```
+C:\Users\<你的用户名>\AppData\Local\Notes\notes.json
 ```
