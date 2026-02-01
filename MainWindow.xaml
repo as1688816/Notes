@@ -1,0 +1,160 @@
+<Window x:Class="NotesApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:NotesApp.Converters"
+        Title="Notes" Height="650" Width="950"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI" Background="#FFFFFF"
+        Icon="pack://application:,,,/app.ico">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/AppStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <local:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
+            <local:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="280"/>
+            <ColumnDefinition Width="1"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Sidebar -->
+        <Border Grid.Column="0" Background="{StaticResource SidebarBg}">
+            <DockPanel>
+                <!-- Toolbar -->
+                <Grid DockPanel.Dock="Top" Margin="12,10,12,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" Style="{StaticResource SearchBox}"
+                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                             Margin="0,0,8,0"/>
+                    <Button Grid.Column="1" Style="{StaticResource ToolbarBtn}"
+                            Content="+" FontSize="22" FontWeight="Light"
+                            Command="{Binding AddNoteCommand}" ToolTip="新建备忘录"/>
+                    <Button Grid.Column="2" Style="{StaticResource ToolbarBtn}"
+                            Content="&#x1F5D1;" FontSize="14"
+                            Command="{Binding DeleteNoteCommand}" ToolTip="删除" Margin="2,0,0,0"/>
+                    <Button Grid.Column="3" Style="{StaticResource ToolbarBtn}"
+                            Content="&#x2B07;" FontSize="14"
+                            Command="{Binding ExportNotesCommand}" ToolTip="导出" Margin="2,0,0,0"/>
+                    <Button Grid.Column="4" Style="{StaticResource ToolbarBtn}"
+                            Content="&#x2B06;" FontSize="14"
+                            Command="{Binding ImportNotesCommand}" ToolTip="导入" Margin="2,0,0,0"/>
+                </Grid>
+
+                <!-- Note List by Year -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding YearGroups}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Year}" FontSize="13" FontWeight="SemiBold"
+                                               Foreground="#8E8E93" Margin="16,12,0,4"/>
+                                    <ListBox ItemsSource="{Binding Notes}"
+                                             SelectedItem="{Binding DataContext.SelectedNote, RelativeSource={RelativeSource AncestorType=Window}}"
+                                             Background="Transparent" BorderThickness="0"
+                                             HorizontalContentAlignment="Stretch">
+                                        <ListBox.ItemContainerStyle>
+                                            <Style TargetType="ListBoxItem">
+                                                <Setter Property="Padding" Value="14,8"/>
+                                                <Setter Property="Margin" Value="6,1"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="ListBoxItem">
+                                                            <Border x:Name="Bd" Background="Transparent"
+                                                                    CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                                                <ContentPresenter/>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsSelected" Value="True">
+                                                                    <Setter TargetName="Bd" Property="Background" Value="#007AFF"/>
+                                                                </Trigger>
+                                                                <MultiTrigger>
+                                                                    <MultiTrigger.Conditions>
+                                                                        <Condition Property="IsMouseOver" Value="True"/>
+                                                                        <Condition Property="IsSelected" Value="False"/>
+                                                                    </MultiTrigger.Conditions>
+                                                                    <Setter TargetName="Bd" Property="Background" Value="#E8E8ED"/>
+                                                                </MultiTrigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </ListBox.ItemContainerStyle>
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Title}" FontSize="13" FontWeight="SemiBold"
+                                                               Foreground="#1C1C1E"/>
+                                                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                                                        <TextBlock Text="{Binding DateDisplay}" FontSize="11"
+                                                                   Foreground="#8E8E93" Margin="0,0,8,0"/>
+                                                        <TextBlock Text="{Binding Preview}" FontSize="11"
+                                                                   Foreground="#8E8E93" TextTrimming="CharacterEllipsis"
+                                                                   MaxWidth="140"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </DockPanel>
+        </Border>
+
+        <!-- Separator -->
+        <Border Grid.Column="1" Background="{StaticResource BorderGray}"/>
+
+        <!-- Editor -->
+        <Grid Grid.Column="2"
+              Visibility="{Binding SelectedNote, Converter={StaticResource NullToVisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="{Binding SelectedNote.DateDisplay}"
+                       HorizontalAlignment="Center" Margin="0,14,0,6"
+                       FontSize="11" Foreground="#8E8E93"/>
+
+            <RichTextBox x:Name="Editor" Grid.Row="1"
+                         BorderThickness="0" Padding="36,6,36,20"
+                         FontFamily="Segoe UI" FontSize="14"
+                         AcceptsReturn="True" AcceptsTab="True"
+                         VerticalScrollBarVisibility="Auto"
+                         TextChanged="Editor_TextChanged"
+                         LostFocus="Editor_LostFocus"/>
+        </Grid>
+
+        <!-- Empty state -->
+        <TextBlock Grid.Column="2" Text="点击 + 创建新备忘录"
+                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                   FontSize="16" Foreground="#C7C7CC">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SelectedNote}" Value="{x:Null}">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+    </Grid>
+</Window>
